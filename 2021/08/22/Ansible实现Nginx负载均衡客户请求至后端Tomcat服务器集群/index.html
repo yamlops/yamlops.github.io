@@ -1,0 +1,232 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ansible实现Nginx负载均衡客户请求至后端Tomcat服务器集群 | YamlOps</title><meta name="author" content="Yaml Ops"><meta name="copyright" content="Yaml Ops"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="#搭建环境  安装Ansible1yum -y install ansible">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ansible实现Nginx负载均衡客户请求至后端Tomcat服务器集群">
+<meta property="og:url" content="https://yamlops.github.io/2021/08/22/Ansible%E5%AE%9E%E7%8E%B0Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%A2%E6%88%B7%E8%AF%B7%E6%B1%82%E8%87%B3%E5%90%8E%E7%AB%AFTomcat%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%9B%86%E7%BE%A4/index.html">
+<meta property="og:site_name" content="YamlOps">
+<meta property="og:description" content="#搭建环境  安装Ansible1yum -y install ansible">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-08-22T09:58:50.390Z">
+<meta property="article:modified_time" content="2021-08-22T09:58:50.391Z">
+<meta property="article:author" content="Yaml Ops">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://yamlops.github.io/2021/08/22/Ansible%E5%AE%9E%E7%8E%B0Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%A2%E6%88%B7%E8%AF%B7%E6%B1%82%E8%87%B3%E5%90%8E%E7%AB%AFTomcat%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%9B%86%E7%BE%A4/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Ansible实现Nginx负载均衡客户请求至后端Tomcat服务器集群',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2021-08-22 17:58:50'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a></div></div></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">YamlOps</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Ansible实现Nginx负载均衡客户请求至后端Tomcat服务器集群</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-08-22T09:58:50.390Z" title="发表于 2021-08-22 17:58:50">2021-08-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-08-22T09:58:50.391Z" title="更新于 2021-08-22 17:58:50">2021-08-22</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Ansible实现Nginx负载均衡客户请求至后端Tomcat服务器集群"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><img src="http://upload-images.jianshu.io/upload_images/6121564-a956d84118c630f9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<p>#搭建环境</p>
+<ul>
+<li><strong>安装Ansible</strong><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install ansible</span><br></pre></td></tr></table></figure>
+<span id="more"></span></li>
+<li><strong>配置主机清单</strong><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/ansible/hosts</span><br></pre></td></tr></table></figure>
+<img src="http://upload-images.jianshu.io/upload_images/6121564-25a2c8f5f2a7e2e3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="定义主机清单"></li>
+<li><strong>检查主机清单是否添加成功</strong><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@Client ansible]#ansible all --list-hosts</span><br><span class="line">  hosts (3):</span><br><span class="line">    host1.centos7</span><br><span class="line">    host2.centos7</span><br><span class="line">    host3.centos7</span><br><span class="line">[root@Client ansible]#ansible lb --list-hosts</span><br><span class="line">  hosts (1):</span><br><span class="line">    host1.centos7</span><br><span class="line">[root@Client ansible]#ansible tc --list-hosts</span><br><span class="line">  hosts (2):</span><br><span class="line">    host2.centos7</span><br><span class="line">    host3.centos7</span><br><span class="line">[root@Client ansible]#</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-077742825792c97e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<ul>
+<li><strong>基于ssh做无密钥认证</strong><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">[root@Client ansible]#ssh-keygen -t rsa -P &#x27;&#x27;</span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file in which to save the key (/root/.ssh/id_rsa): </span><br><span class="line">Your identification has been saved in /root/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved in /root/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">02:6e:ab:d7:9a:35:54:25:7b:e6:2d:f7:c8:d8:aa:c1 root@Client.centos7</span><br><span class="line">The key&#x27;s randomart image is:</span><br><span class="line">+--[ RSA 2048]----+</span><br><span class="line">|        . .      |</span><br><span class="line">|         +       |</span><br><span class="line">|    .   o o      |</span><br><span class="line">|   . . . + .     |</span><br><span class="line">|    o o S o o    |</span><br><span class="line">|   . o o   * o   |</span><br><span class="line">|    ..o E . + .  |</span><br><span class="line">|   ..o.. . .     |</span><br><span class="line">|  ..o.  ...      |</span><br><span class="line">+-----------------+</span><br><span class="line">[root@Client ansible]#ssh-copy-id -i ~/.ssh/id_rsa.pub root@host1</span><br><span class="line">The authenticity of host &#x27;host1 (192.168.10.11)&#x27; can&#x27;t be established.</span><br><span class="line">ECDSA key fingerprint is 9a:7d:a7:45:06:e0:7f:f2:d5:9c:35:05:8c:c2:f7:e9.</span><br><span class="line">Are you sure you want to continue connecting (yes/no)? yes</span><br><span class="line">/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), </span><br><span class="line">to filter out any that are already installed</span><br><span class="line">/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now </span><br><span class="line">it is to install the new keys</span><br><span class="line">root@host1&#x27;s password: </span><br><span class="line"></span><br><span class="line">Number of key(s) added: 1</span><br><span class="line"></span><br><span class="line">Now try logging into the machine, with:   &quot;ssh &#x27;root@host1&#x27;&quot;</span><br><span class="line">and check to make sure that only the key(s) you wanted were added.</span><br><span class="line"></span><br><span class="line">[root@Client ansible]#ssh-copy-id -i ~/.ssh/id_rsa.pub root@host2</span><br><span class="line">...</span><br><span class="line">[root@Client ansible]#ssh-copy-id -i ~/.ssh/id_rsa.pub root@host3</span><br><span class="line">...</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-2693b94f415bb935.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<ul>
+<li><strong>测试 ssh 链接</strong></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-bd2d7caaea3336fa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<ul>
+<li><strong>执行简单的ansible命令测试能否管控远程主机</strong><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@Client ansible]#ansible all -m shell -a &quot;ifconfig ens33&quot; </span><br></pre></td></tr></table></figure>
+<img src="http://upload-images.jianshu.io/upload_images/6121564-1a6de710bc5c4216.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></li>
+<li><strong>同步时间</strong></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-b350d686f891a3a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<hr>
+<p>#创建角色</p>
+<blockquote>
+<p>需要创建三个角色分别为<strong>nginx</strong> 和 <strong>tomcat</strong> 以及 <strong>jdk</strong></p>
+</blockquote>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-f66792d4aa6c971e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-72da45cf9445382d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-50e0625444829fb2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<ul>
+<li><strong>编写playbook剧本nt.yml :</strong></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-c216ea9bc019c38e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<ul>
+<li><strong>编写nginx角色的tasks :</strong></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-bea7c57d5dce0158.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<ul>
+<li> <strong>编写nginx角色的配置文件 :</strong></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-cc261ca1877b0273.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<ul>
+<li> <strong>编写nginx角色的handlers :</strong></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-e4c5606d7ad327e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<ul>
+<li><strong>测试一下nginx角色能否成执行：</strong></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-913e8f63a75ab49f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<ul>
+<li><strong>在lb主机上查看进程和端口是否存在：</strong></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-54cc0e326a951da2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<hr>
+<ul>
+<li><strong>编辑tomcat角色的tasks :</strong></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-bd7e53d3cf06dc60.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<hr>
+<ul>
+<li><strong>编写jdk角色的tasks :</strong></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-53ef3df054510b14.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<ul>
+<li><strong>编写jdk角色的files/java.sh :</strong></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-ef1ffffeaf68facd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<ul>
+<li><strong>编写jdk角色的vars/main.yml :</strong></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-de27b18802ced97c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<hr>
+<p>#完善我们的剧本nt.yml<br><img src="http://upload-images.jianshu.io/upload_images/6121564-adaf8c77f185138f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<p>#执行我们的剧本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">[root@Client ansible]#ansible-playbook nt.yml   </span><br><span class="line"></span><br><span class="line">PLAY [lb] **********************************************************************</span><br><span class="line"></span><br><span class="line">TASK [setup] *******************************************************************</span><br><span class="line">ok: [host1.centos7]</span><br><span class="line"></span><br><span class="line">TASK [nginx : install nginx] ***************************************************</span><br><span class="line">ok: [host1.centos7]</span><br><span class="line"></span><br><span class="line">TASK [nginx : install conf] ****************************************************</span><br><span class="line">ok: [host1.centos7]</span><br><span class="line"></span><br><span class="line">TASK [nginx : start nginx] *****************************************************</span><br><span class="line">ok: [host1.centos7]</span><br><span class="line"></span><br><span class="line">PLAY [tc] **********************************************************************</span><br><span class="line"></span><br><span class="line">TASK [setup] *******************************************************************</span><br><span class="line">ok: [host3.centos7]</span><br><span class="line">ok: [host2.centos7]</span><br><span class="line"></span><br><span class="line">TASK [jdk : install openjdk] ***************************************************</span><br><span class="line">changed: [host2.centos7]</span><br><span class="line">changed: [host3.centos7]</span><br><span class="line"></span><br><span class="line">TASK [jdk : install evn file] **************************************************</span><br><span class="line">changed: [host3.centos7]</span><br><span class="line">changed: [host2.centos7]</span><br><span class="line"></span><br><span class="line">TASK [tomcat : install package] ************************************************</span><br><span class="line">changed: [host3.centos7] =&gt; (item=[u&#x27;tomcat&#x27;, u&#x27;tomcat-admin-webapps&#x27;, u&#x27;tomcat-webapps&#x27;, u&#x27;tomcat-docs-webapp&#x27;])</span><br><span class="line">changed: [host2.centos7] =&gt; (item=[u&#x27;tomcat&#x27;, u&#x27;tomcat-admin-webapps&#x27;, u&#x27;tomcat-webapps&#x27;, u&#x27;tomcat-docs-webapp&#x27;])</span><br><span class="line"></span><br><span class="line">TASK [tomcat : start tomcat] ***************************************************</span><br><span class="line">changed: [host3.centos7]</span><br><span class="line">changed: [host2.centos7]</span><br><span class="line"></span><br><span class="line">PLAY RECAP *********************************************************************</span><br><span class="line">host1.centos7              : ok=4    changed=0    unreachable=0    failed=0   </span><br><span class="line">host2.centos7              : ok=5    changed=4    unreachable=0    failed=0   </span><br><span class="line">host3.centos7              : ok=5    changed=4    unreachable=0    failed=0   </span><br><span class="line"></span><br><span class="line">[root@Client ansible]#</span><br></pre></td></tr></table></figure>
+<p>#最终测试</p>
+<blockquote>
+<p><strong>在浏览器里输入<a target="_blank" rel="noopener" href="http://www.grh.io/">www.grh.io</a></strong></p>
+</blockquote>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-a98badd327a11b34.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Yaml Ops</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://yamlops.github.io/2021/08/22/Ansible%E5%AE%9E%E7%8E%B0Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%A2%E6%88%B7%E8%AF%B7%E6%B1%82%E8%87%B3%E5%90%8E%E7%AB%AFTomcat%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%9B%86%E7%BE%A4/">https://yamlops.github.io/2021/08/22/Ansible%E5%AE%9E%E7%8E%B0Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%A2%E6%88%B7%E8%AF%B7%E6%B1%82%E8%87%B3%E5%90%8E%E7%AB%AFTomcat%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%9B%86%E7%BE%A4/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://yamlops.github.io" target="_blank">YamlOps</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/08/22/Ansible%E7%9A%84%E5%B8%B8%E7%94%A8%E6%A8%A1%E5%9D%97/"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Ansible的常用模块</div></div></a></div><div class="next-post pull-right"><a href="/2021/08/22/hello-world/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Hello World</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Yaml Ops</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/%E6%9F%A5%E7%9C%8B%E9%9A%90%E8%97%8F%E6%96%87%E4%BB%B6%E7%9A%84%E6%96%B9%E6%B3%95/" title="查看隐藏文件的几种方法"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="查看隐藏文件的几种方法"/></a><div class="content"><a class="title" href="/2021/08/22/%E6%9F%A5%E7%9C%8B%E9%9A%90%E8%97%8F%E6%96%87%E4%BB%B6%E7%9A%84%E6%96%B9%E6%B3%95/" title="查看隐藏文件的几种方法">查看隐藏文件的几种方法</a><time datetime="2021-08-22T09:58:50.411Z" title="发表于 2021-08-22 17:58:50">2021-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90/" title="修改用户权限"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="修改用户权限"/></a><div class="content"><a class="title" href="/2021/08/22/%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90/" title="修改用户权限">修改用户权限</a><time datetime="2021-08-22T09:58:50.410Z" title="发表于 2021-08-22 17:58:50">2021-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEZabbix-server%E6%9C%8D%E5%8A%A1%E7%AB%AF/" title="安装配置Zabbix-server服务端"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="安装配置Zabbix-server服务端"/></a><div class="content"><a class="title" href="/2021/08/22/%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEZabbix-server%E6%9C%8D%E5%8A%A1%E7%AB%AF/" title="安装配置Zabbix-server服务端">安装配置Zabbix-server服务端</a><time datetime="2021-08-22T09:58:50.410Z" title="发表于 2021-08-22 17:58:50">2021-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/%E6%90%AD%E5%BB%BA%E4%B8%BB%E4%BB%8EDNS%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="搭建主从DNS服务器"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="搭建主从DNS服务器"/></a><div class="content"><a class="title" href="/2021/08/22/%E6%90%AD%E5%BB%BA%E4%B8%BB%E4%BB%8EDNS%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="搭建主从DNS服务器">搭建主从DNS服务器</a><time datetime="2021-08-22T09:58:50.409Z" title="发表于 2021-08-22 17:58:50">2021-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/%E8%AF%AF%E5%88%A0libc.so.6%E5%90%8E%E4%BF%AE%E5%A4%8D%E7%B3%BB%E7%BB%9F%E8%BF%87%E7%A8%8B/" title="删除libc.so.6后如何修复系统"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="删除libc.so.6后如何修复系统"/></a><div class="content"><a class="title" href="/2021/08/22/%E8%AF%AF%E5%88%A0libc.so.6%E5%90%8E%E4%BF%AE%E5%A4%8D%E7%B3%BB%E7%BB%9F%E8%BF%87%E7%A8%8B/" title="删除libc.so.6后如何修复系统">删除libc.so.6后如何修复系统</a><time datetime="2021-08-22T09:58:50.409Z" title="发表于 2021-08-22 17:58:50">2021-08-22</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Yaml Ops</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

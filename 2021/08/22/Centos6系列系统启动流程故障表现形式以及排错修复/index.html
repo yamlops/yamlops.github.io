@@ -1,0 +1,204 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CentOS6系列系统启动流程故障表现形式以及排错修复 | YamlOps</title><meta name="author" content="Yaml Ops"><meta name="copyright" content="Yaml Ops"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本文大体顺序为：某故障—表现形式(图)—排错—修复  ##因MBR损坏导致系统故障无法重启 ####重启表现形式:  ####排错： 如果重启系统后出现上图所示界面说明MBR损坏了。因为是MBR损坏的原因，操作系统重启时认为系统硬盘根本不具有可引导功能了，所以把硬盘忽略过去，直接进入第二个启动设备光盘。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS6系列系统启动流程故障表现形式以及排错修复">
+<meta property="og:url" content="https://yamlops.github.io/2021/08/22/Centos6%E7%B3%BB%E5%88%97%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%95%85%E9%9A%9C%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F%E4%BB%A5%E5%8F%8A%E6%8E%92%E9%94%99%E4%BF%AE%E5%A4%8D/index.html">
+<meta property="og:site_name" content="YamlOps">
+<meta property="og:description" content="本文大体顺序为：某故障—表现形式(图)—排错—修复  ##因MBR损坏导致系统故障无法重启 ####重启表现形式:  ####排错： 如果重启系统后出现上图所示界面说明MBR损坏了。因为是MBR损坏的原因，操作系统重启时认为系统硬盘根本不具有可引导功能了，所以把硬盘忽略过去，直接进入第二个启动设备光盘。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-08-22T09:58:50.393Z">
+<meta property="article:modified_time" content="2021-08-22T09:58:50.393Z">
+<meta property="article:author" content="Yaml Ops">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://yamlops.github.io/2021/08/22/Centos6%E7%B3%BB%E5%88%97%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%95%85%E9%9A%9C%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F%E4%BB%A5%E5%8F%8A%E6%8E%92%E9%94%99%E4%BF%AE%E5%A4%8D/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CentOS6系列系统启动流程故障表现形式以及排错修复',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2021-08-22 17:58:50'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a></div></div></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">YamlOps</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CentOS6系列系统启动流程故障表现形式以及排错修复</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-08-22T09:58:50.393Z" title="发表于 2021-08-22 17:58:50">2021-08-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-08-22T09:58:50.393Z" title="更新于 2021-08-22 17:58:50">2021-08-22</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="CentOS6系列系统启动流程故障表现形式以及排错修复"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><img src="http://upload-images.jianshu.io/upload_images/6121564-6f248c411a5683bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<blockquote>
+<p>本文大体顺序为：某故障—表现形式(图)—排错—修复</p>
+</blockquote>
+<p>##因MBR损坏导致系统故障无法重启</p>
+<p>####重启表现形式:</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-788dabeeca00dc97.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<p>####排错：</p>
+<p>如果重启系统后出现上图所示界面说明<strong>MBR</strong>损坏了。因为是MBR损坏的原因，操作系统重启时认为系统硬盘根本不具有可引导功能了，所以把硬盘忽略过去，直接进入第二个启动设备光盘。</p>
+<span id="more"></span>
+<p>####修复方法：</p>
+<p><strong>进入救援模式 — <code>chroot  /mnt/sysimage/</code> — <code>grub-install</code> — <code>sync</code> — <code>exit</code> — <code>reboot</code></strong></p>
+<blockquote>
+<p>这里略过进入救援模式的步骤</p>
+</blockquote>
+<p><strong>切根：chroot  /mnt/sysimage/</strong><br>进入救援模式制后需要注意当前的根并不是我们系统里的根，是光盘自带的小Linux的根，而真正的根在进入救援模式的时候已经帮我们寻找到并把它挂载到了/mnt/sysimage上，可通过**<code>df</code>**命令查看</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-0df237fa6403c895.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<p>所以进入救援模式的**<code>shell</code>**之后最好先进行切根操作</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-db9883f4676e3af8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="**`chroot  /mnt/sysiage`**"></p>
+<p><strong>修复：用grub-install命令</strong><br>命令**<code>grub-install</code><strong>是修复</strong><code>grub</code><strong>的，它可以把系统启动流程中的</strong><code>stage1</code><strong>和</strong><code>stage1_5</code><strong>阶段安装到对应的磁盘上去，并把二阶段的相关文件复制到</strong><code>boot</code>**目录下。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-1dc04501ffb53623.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="修复完之后多同步几次再退出"></p>
+<p><strong>同步数据：用sync命令</strong><br>sync命令是同步缓存数据的，因为我们向磁盘里写数据是先写进缓存里再读进磁盘里的。所以这时候不能急，多同步几下，让数据完全写进磁盘里在退出重启。请看上图；</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-74e2fa0e4c571a83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="reboot"></p>
+<p><strong>代码块:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash-4.1# chroot /mnt/sysimage   &lt;---- 切根</span><br><span class="line">sh-4.1# grub-install /dev/sda    &lt;---- 修复</span><br><span class="line">sh-4.1# sync                     &lt;---- 同步数据</span><br><span class="line">sh-4.1# sync</span><br><span class="line">sh-4.1# exit</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>##grub的stage1_5阶段出现故障无法重启<br>####重启表现形式：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-73f4b9994c67e818.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="**`stage1_5 阶段损坏重启表现形式`**"></p>
+<p>####排错：<br>看到上图可以确定是stage1_5阶段损坏引起的故障，导致无法重启。如果一阶段没出问题，MBR没坏，系统会认为磁盘能启动，不会进入到光盘界面，只是后续起不来了，想进二阶段进不去了。</p>
+<p>####修复方法：</p>
+<blockquote>
+<p>和修复stage1阶段出故障一样，特别注意重启表现形式的区别。所以下面我列出步骤和命令代码块</p>
+</blockquote>
+<p><strong>进入救援模式 — <code>chroot  /mnt/sysimage/</code> — <code>grub-install</code> — <code>sync</code> — <code>exit</code> — <code>reboot</code></strong></p>
+<p><strong>代码块:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash-4.1# chroot /mnt/sysimage   &lt;---- 切根</span><br><span class="line">sh-4.1# grub-install /dev/sda    &lt;---- 修复</span><br><span class="line">sh-4.1# sync                     &lt;---- 同步数据</span><br><span class="line">sh-4.1# sync</span><br><span class="line">sh-4.1# exit</span><br></pre></td></tr></table></figure>
+<hr>
+<p>##grub 的2 阶段出故障导致无法启动</p>
+<p>####重启表现形式：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-22424bd6325b4df3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2阶段出故障的重启表现形式"></p>
+<p>####排错：<br>初始安装的时候/boot/grub/下的文件并不是放在该目录下的，而是放在扇区里，如果后期经过grub-install命令修复过故障，会把那些文件写在该目录下。所以再次出故障表现的形式也不一样，如上图所示；</p>
+<p>####修复方法：<br>修复方法还是进入光盘引导的救援模式；与上述的故障修复一样。</p>
+<p>####但是：</p>
+<blockquote>
+<p>如果你是因为误操作把整个<strong>grub</strong>目下的所有文件都删除了的话，上面的修复步骤还不能完全修复好，<strong>grub</strong>下的<strong>grub.conf</strong>文件可不是<strong>grub-install</strong>命令可以生成的！<strong>grub.conf</strong>文件是由我们安装系统的时候<strong>安装向导程序 anaconda</strong>生成的！！所以当我们完成上面的步骤<strong>reboot</strong>之后我们还需手动制作<strong>grub.conf</strong>文件！</p>
+</blockquote>
+<p><strong>显示界面：</strong><br><img src="http://upload-images.jianshu.io/upload_images/6121564-bfdc8a0594d11a63.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这就是重启后制作grub.conf文件的界面"></p>
+<p><strong>制作grub.conf文件：</strong><br><img src="http://upload-images.jianshu.io/upload_images/6121564-5ea1f3abd375bc83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="输入图中红框里的三行内容boot回车重启"></p>
+<p><strong>因为系统又一次去扫文件，我们需要再一次执行上面的操作才算完成</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-5c6439b9d80ea124.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<hr>
+<p>##结语<br><strong>这</strong>里我只列出三种相似系统故障的表现形式和修复方法。</p>
+<p><strong>有</strong>文件损坏、误操作等各种原因引起的系统故障导致无法重启，其表现形式都有所不同。我也不能在这么一篇简简单单的博文里全部列出来。当然我菜鸟级别的技术水平，也列不出所有来。所以这篇博文我称之为第一篇。后续还有更新更多的相关博文。我好你好大家好才是真的好…</p>
+<p><strong>如</strong>果本文那里有误，我会非常愿意大家帮纠错。同时大家有其他更多的系统故障排错修复经验强烈要求分享给我吧，大牛们！！！</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Yaml Ops</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://yamlops.github.io/2021/08/22/Centos6%E7%B3%BB%E5%88%97%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%95%85%E9%9A%9C%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F%E4%BB%A5%E5%8F%8A%E6%8E%92%E9%94%99%E4%BF%AE%E5%A4%8D/">https://yamlops.github.io/2021/08/22/Centos6%E7%B3%BB%E5%88%97%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%95%85%E9%9A%9C%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F%E4%BB%A5%E5%8F%8A%E6%8E%92%E9%94%99%E4%BF%AE%E5%A4%8D/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://yamlops.github.io" target="_blank">YamlOps</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/08/22/LVS%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E5%8F%8ASorryServer/"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">LVS负载均衡高可用集群及Sorry Server</div></div></a></div><div class="next-post pull-right"><a href="/2021/08/22/LVM/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">LVM逻辑卷管理</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Yaml Ops</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">39</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/%E6%9F%A5%E7%9C%8B%E9%9A%90%E8%97%8F%E6%96%87%E4%BB%B6%E7%9A%84%E6%96%B9%E6%B3%95/" title="查看隐藏文件的几种方法"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="查看隐藏文件的几种方法"/></a><div class="content"><a class="title" href="/2021/08/22/%E6%9F%A5%E7%9C%8B%E9%9A%90%E8%97%8F%E6%96%87%E4%BB%B6%E7%9A%84%E6%96%B9%E6%B3%95/" title="查看隐藏文件的几种方法">查看隐藏文件的几种方法</a><time datetime="2021-08-22T09:58:50.411Z" title="发表于 2021-08-22 17:58:50">2021-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90/" title="修改用户权限"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="修改用户权限"/></a><div class="content"><a class="title" href="/2021/08/22/%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90/" title="修改用户权限">修改用户权限</a><time datetime="2021-08-22T09:58:50.410Z" title="发表于 2021-08-22 17:58:50">2021-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEZabbix-server%E6%9C%8D%E5%8A%A1%E7%AB%AF/" title="安装配置Zabbix-server服务端"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="安装配置Zabbix-server服务端"/></a><div class="content"><a class="title" href="/2021/08/22/%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEZabbix-server%E6%9C%8D%E5%8A%A1%E7%AB%AF/" title="安装配置Zabbix-server服务端">安装配置Zabbix-server服务端</a><time datetime="2021-08-22T09:58:50.410Z" title="发表于 2021-08-22 17:58:50">2021-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/%E6%90%AD%E5%BB%BA%E4%B8%BB%E4%BB%8EDNS%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="搭建主从DNS服务器"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="搭建主从DNS服务器"/></a><div class="content"><a class="title" href="/2021/08/22/%E6%90%AD%E5%BB%BA%E4%B8%BB%E4%BB%8EDNS%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="搭建主从DNS服务器">搭建主从DNS服务器</a><time datetime="2021-08-22T09:58:50.409Z" title="发表于 2021-08-22 17:58:50">2021-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/%E8%AF%AF%E5%88%A0libc.so.6%E5%90%8E%E4%BF%AE%E5%A4%8D%E7%B3%BB%E7%BB%9F%E8%BF%87%E7%A8%8B/" title="删除libc.so.6后如何修复系统"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="删除libc.so.6后如何修复系统"/></a><div class="content"><a class="title" href="/2021/08/22/%E8%AF%AF%E5%88%A0libc.so.6%E5%90%8E%E4%BF%AE%E5%A4%8D%E7%B3%BB%E7%BB%9F%E8%BF%87%E7%A8%8B/" title="删除libc.so.6后如何修复系统">删除libc.so.6后如何修复系统</a><time datetime="2021-08-22T09:58:50.409Z" title="发表于 2021-08-22 17:58:50">2021-08-22</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Yaml Ops</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
