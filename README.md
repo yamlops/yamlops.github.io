@@ -54,9 +54,6 @@
 
 ## CGroups
 
-![image-20201115213713866](/Users/newcgtn/Library/Application Support/typora-user-images/image-20201115213713866.png)
-
-
 
 ## Docker :
 
@@ -134,9 +131,6 @@ root@hyrila:~# docker inspect -f "{{.State.Pid}}" f2805e476e01  # 这个是查�
   root@hyrila:~# docker top f2805e476e01UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMDroot                6145                6125                0                   17:34               pts/0               00:00:00            /bin/sh
   ```
 
-  
-
-![image-20201129175124992](/Users/newcgtn/Library/Application Support/typora-user-images/image-20201129175124992.png)
 
 
 
@@ -146,9 +140,6 @@ root@hyrila:~# docker inspect -f "{{.State.Pid}}" f2805e476e01  # 这个是查�
 root@hyrila:~# docker ps -a -f status=exitedroot@hyrila:~# docker ps -aq -f status=exitedroot@hyrila:~# docker rm -fv `docker ps -aq -f status=exited`
 ```
 
-
-
-![image-20201202182011917](/Users/newcgtn/Library/Application Support/typora-user-images/image-20201202182011917.png)
 
 
 
@@ -166,15 +157,12 @@ root@hyrila:~# docker commit -a "WXG IN BJ WorkSpaces" -m "YUM INSTALL NGINX FRO
 
 #### 根据容器提交生成镜像
 
-![image-20201204111358822](/Users/newcgtn/Library/Application Support/typora-user-images/image-20201204111358822.png)
 
 #### 查看生成的镜像并用来启动容器
 
-![image-20201204112735061](/Users/newcgtn/Library/Application Support/typora-user-images/image-20201204112735061.png)
 
 - 检查下效果
 
-  ![image-20201204112946382](/Users/newcgtn/Library/Application Support/typora-user-images/image-20201204112946382.png)
 
   
 
@@ -204,23 +192,14 @@ root@hyrila:/opt/dockerfile/nginx-src# pwd/opt/dockerfile/nginx-srcroot@hyrila:/
 
 #### 5. 制作JDK镜像
 
-![image-20210103143821670](/Users/newcgtn/Library/Application Support/typora-user-images/image-20210103143821670.png)
 
 #### 6. 分层镜像
 
-![image-20210121144231091](/Users/newcgtn/Library/Application Support/typora-user-images/image-20210121144231091.png)
-
 ### 7. Dockerfile 优化减少image的大小
-
-![image-20210128164117877](/Users/newcgtn/Library/Application Support/typora-user-images/image-20210128164117877.png)
 
 - **大小对比图**
 
-![image-20210128163726321](/Users/newcgtn/Library/Application Support/typora-user-images/image-20210128163726321.png)
-
 ### 小架构实验
-
-![image-20210131135702091](/Users/newcgtn/Library/Application Support/typora-user-images/image-20210131135702091.png)
 
 
 
@@ -242,22 +221,15 @@ root@hyrila:/opt/dockerfile/nginx-src# pwd/opt/dockerfile/nginx-srcroot@hyrila:/
 
 ### Pod 安全上下文
 
-![image-20210815123055607](/Users/newcgtn/Library/Application Support/typora-user-images/image-20210815123055607.png)
-
 
 
 ### 拉取镜像策略
 
-![image-20210815124825471](/Users/newcgtn/Library/Application Support/typora-user-images/image-20210815124825471.png)
-
 
 
 强制删除一个pod
-![image-20210815130445602](/Users/newcgtn/Library/Application Support/typora-user-images/image-20210815130445602.png)
 
 ### Pod 安全上下文允许设置的安全的sysctl内核参数有三个
-
-![image-20210815133720145](/Users/newcgtn/Library/Application Support/typora-user-images/image-20210815133720145.png)
 
 
 
@@ -269,7 +241,6 @@ vim /etc/default/kubelet# /etc/default/kubelet 内容KUBELET_EXTRA_ARGS='--allow
 
 ### Pod 健康探测
 
-![image-20210817110433666](/Users/newcgtn/Library/Application Support/typora-user-images/image-20210817110433666.png)
 
 
 
