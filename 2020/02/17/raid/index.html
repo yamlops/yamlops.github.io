@@ -1,0 +1,203 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RAID技术简记 | YamlOps</title><meta name="author" content="Yaml Ops"><meta name="copyright" content="Yaml Ops"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="##什么是廉价磁盘冗余阵列RAID？###概念简述  顾名思义,廉价磁盘冗余阵列是一种将多个较小的磁盘整合成为一个较大的磁盘装置。从而达到数据存储和数据保护等功能！  ###数据保护有多个磁盘组成的磁盘阵列固然能都做到数据存储的功能，那么又是怎么做到数据保护的功能呢？  保护功能体现在讲一个将数据切割成多个分段，放在不同的物理磁盘上。这样就可以避免因为单块儿或者多块儿磁盘故障而导致的数据丢失问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RAID技术简记">
+<meta property="og:url" content="https://yamlops.github.io/2020/02/17/raid/index.html">
+<meta property="og:site_name" content="YamlOps">
+<meta property="og:description" content="##什么是廉价磁盘冗余阵列RAID？###概念简述  顾名思义,廉价磁盘冗余阵列是一种将多个较小的磁盘整合成为一个较大的磁盘装置。从而达到数据存储和数据保护等功能！  ###数据保护有多个磁盘组成的磁盘阵列固然能都做到数据存储的功能，那么又是怎么做到数据保护的功能呢？  保护功能体现在讲一个将数据切割成多个分段，放在不同的物理磁盘上。这样就可以避免因为单块儿或者多块儿磁盘故障而导致的数据丢失问题。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg">
+<meta property="article:published_time" content="2020-02-17T01:50:25.722Z">
+<meta property="article:modified_time" content="2020-02-17T01:50:25.722Z">
+<meta property="article:author" content="Yaml Ops">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://yamlops.github.io/2020/02/17/raid/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'RAID技术简记',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2020-02-17 09:50:25'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">41</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E9%9F%B3%E4%B9%90"><i class="fa-fw /music/"></i><span> 0</span></a></li><li><a class="site-page child" href="/%E7%94%B5%E5%BD%B1"><i class="fa-fw /movies/"></i><span> 1</span></a></li><li><a class="site-page child" href="/%E7%85%A7%E7%89%87"><i class="fa-fw /Gallery/"></i><span> 2</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">YamlOps</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E9%9F%B3%E4%B9%90"><i class="fa-fw /music/"></i><span> 0</span></a></li><li><a class="site-page child" href="/%E7%94%B5%E5%BD%B1"><i class="fa-fw /movies/"></i><span> 1</span></a></li><li><a class="site-page child" href="/%E7%85%A7%E7%89%87"><i class="fa-fw /Gallery/"></i><span> 2</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">RAID技术简记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-02-17T01:50:25.722Z" title="发表于 2020-02-17 09:50:25">2020-02-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-02-17T01:50:25.722Z" title="更新于 2020-02-17 09:50:25">2020-02-17</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="RAID技术简记"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>##什么是廉价磁盘冗余阵列<strong>RAID</strong>？<br>###概念简述</p>
+<blockquote>
+<p><strong>顾</strong>名思义,廉价磁盘冗余阵列是一种将多个较小的磁盘整合成为一个较大的磁盘装置。从而达到<strong>数据存储</strong>和<strong>数据保护</strong>等功能！</p>
+</blockquote>
+<p>###数据保护<br>有多个磁盘组成的磁盘阵列固然能都做到数据存储的功能，那么又是怎么做到<strong>数据保护</strong>的功能呢？</p>
+<blockquote>
+<p>保护功能体现在讲一个将数据切割成多个分段，放在不同的物理磁盘上。这样就可以避免因为单块儿或者多块儿磁盘故障而导致的数据丢失问题。当然这里就需要借助于<code>**RAID**</code>技术的灵活运用来达到不同效果！</p>
+</blockquote>
+<span id="more"></span>
+<hr>
+<p>###RAID级别</p>
+<blockquote>
+<p>生产环境的不同和技术上的不断发展<strong>RAID</strong>技术也以不同的方式或级别被各方运用着。从而形成各种级别和方式。这里我简单的挑选个别级别来说一下。</p>
+</blockquote>
+<p>####RAID-0</p>
+<blockquote>
+<p><strong>RAID-0</strong>级别也叫条带卷，它主要实现方式是把一份数据切成多个分段连续存放磁盘阵列的每一个磁盘上，达到同时存取读写目的。它代表了所有<strong>RAID</strong>级别中最高的存储性能。</p>
+</blockquote>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-9faa8137cd0cab73.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="RAID-0示意图"></p>
+<p>#####RAID-0特性</p>
+<blockquote>
+<p>1.性能优秀<br>2.没有冗错性<br>3.磁盘利用率100%</p>
+</blockquote>
+<hr>
+<p>####RAID-1</p>
+<blockquote>
+<p><strong>RAID-1</strong>级别也叫镜像卷，顾名思义它主要实现方式是两块磁盘同时读写数据。防止单个物理磁盘损坏导致的数据丢失。</p>
+</blockquote>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-e4f9c3de1f05dac0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="**RAID-1示意图**"></p>
+<p>#####RAID-1特性</p>
+<blockquote>
+<p>1.安全性高<br>2.冗错性不错<br>3.磁盘利用率50%<br>4.读取性能高<br>5.成本高</p>
+</blockquote>
+<hr>
+<p>####RAID-4</p>
+<blockquote>
+<p><strong>RAID-4</strong>级别的数据都是依次存储在多个硬盘之上，奇偶校验码存放在独立的奇偶校验盘上。</p>
+</blockquote>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-1a6857c0dc0e0dd1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="**RIAD -4示意图**"></p>
+<p>所谓异性相吸，同性相斥。有了校验盘之后，数据块损坏了也可以通过校验位进行恢复。<br>#####RAID-4特性</p>
+<blockquote>
+<p>1.读取性能好<br>2.因为有校验位，冗错性不错<br>3.稳定性差</p>
+</blockquote>
+<hr>
+<p>####RAID-5</p>
+<blockquote>
+<p><strong>RAID-5</strong>级别简单来讲就是RAID-4的升级版，不同于RAID-4的地方是它没有独立的校验盘，而是分散的。或者可以说它是RAID-1和RAID-0的拆中版。</p>
+</blockquote>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-b12f02de125f4ca0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="**RAID-5**"><br>#####RAID-5特性</p>
+<blockquote>
+<p>1.性能不错<br>2.数据安全性好<br>3.冗错性不错<br>4.磁盘利用率为N-1/N</p>
+</blockquote>
+<hr>
+<p>######Ps:上述都是我浅薄的认知。大牛们可以忽略本文章，如有问题我更希望大牛们不吝赐教。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Yaml Ops</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://yamlops.github.io/2020/02/17/raid/">https://yamlops.github.io/2020/02/17/raid/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://yamlops.github.io" target="_blank">YamlOps</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/02/17/LinuxIptables/"><img class="prev-cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Linux iptables</div></div></a></div><div class="next-post pull-right"><a href="/2020/02/17/LVS%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E5%8F%8ASorryServer/"><img class="next-cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">LVS负载均衡高可用集群及Sorry Server</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Yaml Ops</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">41</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/k8s-docker-note/" title="k8s-docker-note"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="k8s-docker-note"/></a><div class="content"><a class="title" href="/2021/08/22/k8s-docker-note/" title="k8s-docker-note">k8s-docker-note</a><time datetime="2021-08-22T14:42:41.000Z" title="发表于 2021-08-22 22:42:41">2021-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/install-mysql/" title="install-mysql"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="install-mysql"/></a><div class="content"><a class="title" href="/2021/08/22/install-mysql/" title="install-mysql">install-mysql</a><time datetime="2021-08-22T10:05:25.000Z" title="发表于 2021-08-22 18:05:25">2021-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/02/21/test/" title="test"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="test"/></a><div class="content"><a class="title" href="/2020/02/21/test/" title="test">test</a><time datetime="2020-02-21T11:19:01.000Z" title="发表于 2020-02-21 19:19:01">2020-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/02/21/Linux%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E7%A8%8B%E5%BA%8F%E8%84%9A%E6%9C%AC/" title="Linux开机自启程序脚本"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux开机自启程序脚本"/></a><div class="content"><a class="title" href="/2020/02/21/Linux%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E7%A8%8B%E5%BA%8F%E8%84%9A%E6%9C%AC/" title="Linux开机自启程序脚本">Linux开机自启程序脚本</a><time datetime="2020-02-21T05:50:43.000Z" title="发表于 2020-02-21 13:50:43">2020-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/02/17/%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90/" title="修改用户权限"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="修改用户权限"/></a><div class="content"><a class="title" href="/2020/02/17/%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90/" title="修改用户权限">修改用户权限</a><time datetime="2020-02-17T02:26:48.705Z" title="发表于 2020-02-17 10:26:48">2020-02-17</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Yaml Ops</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

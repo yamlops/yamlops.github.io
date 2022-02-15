@@ -1,0 +1,205 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>keepalived概念 | YamlOps</title><meta name="author" content="Yaml Ops"><meta name="copyright" content="Yaml Ops"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="#vrrp协议简介：   虚拟路由冗余协议(Virtual Router Redundancy Protocol，简称VRRP协议) VRRP是一种选择协议。它可以把一个虚拟路由器的责任动态分配到局域网上的 VRRP 路由器中的一台。控制虚拟路由器 IP 地址的 VRRP 路由器称为主路由器，它负责转发数据包到这些虚拟 IP 地址。  一旦主路由器不可用，这种选择过程就提供了动态的故障转移机制，这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="keepalived概念">
+<meta property="og:url" content="https://yamlops.github.io/2020/02/17/keepalived%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:site_name" content="YamlOps">
+<meta property="og:description" content="#vrrp协议简介：   虚拟路由冗余协议(Virtual Router Redundancy Protocol，简称VRRP协议) VRRP是一种选择协议。它可以把一个虚拟路由器的责任动态分配到局域网上的 VRRP 路由器中的一台。控制虚拟路由器 IP 地址的 VRRP 路由器称为主路由器，它负责转发数据包到这些虚拟 IP 地址。  一旦主路由器不可用，这种选择过程就提供了动态的故障转移机制，这">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg">
+<meta property="article:published_time" content="2020-02-17T01:44:17.925Z">
+<meta property="article:modified_time" content="2020-02-17T01:44:17.925Z">
+<meta property="article:author" content="Yaml Ops">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://yamlops.github.io/2020/02/17/keepalived%E6%A6%82%E5%BF%B5/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'keepalived概念',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2020-02-17 09:44:17'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">41</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E9%9F%B3%E4%B9%90"><i class="fa-fw /music/"></i><span> 0</span></a></li><li><a class="site-page child" href="/%E7%94%B5%E5%BD%B1"><i class="fa-fw /movies/"></i><span> 1</span></a></li><li><a class="site-page child" href="/%E7%85%A7%E7%89%87"><i class="fa-fw /Gallery/"></i><span> 2</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">YamlOps</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E9%9F%B3%E4%B9%90"><i class="fa-fw /music/"></i><span> 0</span></a></li><li><a class="site-page child" href="/%E7%94%B5%E5%BD%B1"><i class="fa-fw /movies/"></i><span> 1</span></a></li><li><a class="site-page child" href="/%E7%85%A7%E7%89%87"><i class="fa-fw /Gallery/"></i><span> 2</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">keepalived概念</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-02-17T01:44:17.925Z" title="发表于 2020-02-17 09:44:17">2020-02-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-02-17T01:44:17.925Z" title="更新于 2020-02-17 09:44:17">2020-02-17</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="keepalived概念"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>#vrrp协议简介：</p>
+<blockquote>
+<ul>
+<li><strong>虚拟路由冗余协议(Virtual Router Redundancy Protocol，简称VRRP协议)</strong><ul>
+<li><strong>VRRP是一种选择协议</strong>。它可以把一个虚拟路由器的责任动态分配到局域网上的 VRRP 路由器中的一台。控制虚拟路由器 IP 地址的 VRRP 路由器称为主路由器，它负责转发数据包到这些虚拟 IP 地址。  一旦主路由器不可用，这种选择过程就提供了动态的故障转移机制，这就允许虚拟路由器的 IP 地址可以作为终端主机的默认第一跳路由器。是一种LAN接入设备备份协议。一个局域网络内的所有主机都设置[缺省网关，这样主机发出的目的地址不在本网段的报文将被通过缺省网关发往三层交换机，从而实现了主机和外部网络的通信。</li>
+<li><strong>VRRP是一种路由容错协议，也可以叫做备份路由协议</strong>。一个局域网络内的所有主机都设置缺省路由，当网内主机发出的目的地址不在本网段时，报文将被通过缺省路由发往外部路由器，从而实现了主机与外部网络的通信。当缺省路由器down掉（即端口关闭）之后，内部主机将无法与外部通信，如果路由器设置了VRRP时，那么这时，虚拟路由将启用备份路由器，从而实现全网通信。</li>
+<li><strong>VRRP（Virtual Router Redundancy Protocol，虚拟路由冗余协议）是一种容错协议</strong>。通常，一个网络内的所有主机都设置一条[缺省路由]，这样，主机发出的目的地址不在本网段的报文将被通过缺省路由发往路由器RouterA，从而实现了主机与外部网络的通信。当路由器RouterA 坏掉时，本网段内所有以RouterA 为缺省路由下一跳的主机将断掉与外部的通信产生单点故障。VRRP 就是为解决上述问题而提出的，它为具有多播组播或广播能力的局域网（如：以太网）设计。</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%99%9A%E6%8B%9F%E8%B7%AF%E7%94%B1%E5%99%A8%E5%86%97%E4%BD%99%E5%8D%8F%E8%AE%AE/2991482?fr=aladdin">本段简介摘自百度百科vrrp协议</a></li>
+</ul>
+</blockquote>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">vrrp协议：Virtual Redundant Routing Protocol</span><br><span class="line">      术语：</span><br><span class="line">		虚拟路由器：Virtual Router </span><br><span class="line">		虚拟路由器标识：VRID(0-255)</span><br><span class="line">		物理路由器：</span><br><span class="line">			master：主设备</span><br><span class="line">			backup：备用设备</span><br><span class="line">			priority：优先级</span><br><span class="line">		VIP：Virtual IP </span><br><span class="line">		VMAC：Virutal MAC (00-00-5e-00-01-VRID)</span><br><span class="line">			 GraciousARP</span><br><span class="line">				</span><br><span class="line">通告：心跳，优先级等；周期性；</span><br><span class="line">			</span><br><span class="line">        抢占式，非抢占式；</span><br><span class="line">			</span><br><span class="line">安全工作：</span><br><span class="line">		无认证</span><br><span class="line">		简单字符认证</span><br><span class="line">		MD5</span><br><span class="line">					</span><br><span class="line">工作模式：</span><br><span class="line">    主/备：单虚拟路径器；</span><br><span class="line">    主/主：主/备（虚拟路径器1），备/主（虚拟路径器2）</span><br></pre></td></tr></table></figure>
+
+<p>#keepalived定义：</p>
+<blockquote>
+<ul>
+<li><strong><code>keepalived</code>作为一款软件，能够在<code>Linux</code>主机之上，实现其<code>vrrp协议</code>的功能！设计目的是为了高可用<code>ipvs</code>服务的！</strong><ul>
+<li>基于vrrp协议完成地址转移，或者说地址流动；</li>
+<li>为集群内的所有节点生成ipvs规则（在配置文件中预先定义）；</li>
+<li>为ipvs集群的各RS（Real Server）做健康状态检测；</li>
+<li>基于脚本调用接口通过执行脚本，完成脚本中定义的功能，进而影响集群事物；</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>#keepalived组件：</p>
+<blockquote>
+<ul>
+<li><strong>核心组件：</strong><ul>
+<li><strong>vrrp stack：</strong>vrrp协议的实现</li>
+<li><strong>ipvs wrapper：</strong>为集群内所有节点生成ipvs规则等</li>
+<li><strong>checkers：</strong>为ipvs几群的各RS做健康状态检测的组件；</li>
+</ul>
+</li>
+<li><strong>其他组件：</strong><ul>
+<li><strong>控制组件：</strong>配置文件分析器，用来实现配置文件的分析和加载</li>
+<li><strong>IO复用器</strong></li>
+<li><strong>内存管理组件：</strong>高效管理keepalived的高可用服务时的内存空间占用的</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>#Linux CentOS系统keepalived 安装和配置文件结构</p>
+<p><strong>高可用集群的配置前提：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">HA Cluster的配置前提：</span><br><span class="line">	(1) 各节点时间必须同步；</span><br><span class="line">	        ntp, chrony</span><br><span class="line">	(2) 确保iptables及selinux不会成为阻碍；</span><br><span class="line">	(3) 各节点之间可通过主机名互相通信（对KA并非必须）；</span><br><span class="line">		    建议使用/etc/hosts文件实现； </span><br><span class="line">	(4) 确保各节点的用于集群服务的接口支持MULTICAST（多播）通信；</span><br><span class="line">		    D类：224-239；</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-033e74194e51b2af.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<p><strong>安装keepalived：</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-0e965e545455fe6f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-cd80263c70616803.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="几个主要的文件"></p>
+<p><strong>配置文件组成部分：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">TOP HIERACHY   顶级结构</span><br><span class="line">      GLOBAL CONFIGURATION  全局配置段</span><br><span class="line">      VRRPD CONFIGURATION   vrrp配置段</span><br><span class="line">      LVS CONFIGURATION     LVS配置段</span><br><span class="line"></span><br><span class="line">GLOBAL CONFIGURATION  全局配置段</span><br><span class="line">      Global definitions</span><br><span class="line">      Static routes/addresses   在全局配置中可以添加静态路由</span><br><span class="line"></span><br><span class="line">VRRPD CONFIGURATION  vrrp 配置段</span><br><span class="line">      VRRP synchronization group(s)  同步组</span><br><span class="line">      VRRP instance(s)  vrrp实例：一个vrrp实例就是一个vrrp虚拟路由器</span><br><span class="line"></span><br><span class="line">LVS CONFIGURATION  LVS配置段：keepalived的高可用的时候才有必要配置这段</span><br><span class="line">      Virtual server group(s)  虚拟服务器组</span><br><span class="line">      Virtual server(s)   虚拟服务器</span><br></pre></td></tr></table></figure>
+<hr>
+<p>####（—-未完待续 —- ）</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Yaml Ops</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://yamlops.github.io/2020/02/17/keepalived%E6%A6%82%E5%BF%B5/">https://yamlops.github.io/2020/02/17/keepalived%E6%A6%82%E5%BF%B5/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://yamlops.github.io" target="_blank">YamlOps</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/02/17/Centos6%E7%B3%BB%E5%88%97%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%95%85%E9%9A%9C%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F%E4%BB%A5%E5%8F%8A%E6%8E%92%E9%94%99%E4%BF%AE%E5%A4%8D/"><img class="prev-cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CentOS6系列系统启动流程故障表现形式以及排错修复</div></div></a></div><div class="next-post pull-right"><a href="/2020/02/17/Centos6.9%E5%A4%9A%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E4%B8%80%E4%B8%AAIP/"><img class="next-cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CentOS 6.9系统如何通过多网卡绑定一个IP地址提高网络连接可用性和冗错性？</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Yaml Ops</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">41</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/k8s-docker-note/" title="k8s-docker-note"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="k8s-docker-note"/></a><div class="content"><a class="title" href="/2021/08/22/k8s-docker-note/" title="k8s-docker-note">k8s-docker-note</a><time datetime="2021-08-22T14:42:41.000Z" title="发表于 2021-08-22 22:42:41">2021-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/install-mysql/" title="install-mysql"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="install-mysql"/></a><div class="content"><a class="title" href="/2021/08/22/install-mysql/" title="install-mysql">install-mysql</a><time datetime="2021-08-22T10:05:25.000Z" title="发表于 2021-08-22 18:05:25">2021-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/02/21/test/" title="test"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="test"/></a><div class="content"><a class="title" href="/2020/02/21/test/" title="test">test</a><time datetime="2020-02-21T11:19:01.000Z" title="发表于 2020-02-21 19:19:01">2020-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/02/21/Linux%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E7%A8%8B%E5%BA%8F%E8%84%9A%E6%9C%AC/" title="Linux开机自启程序脚本"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux开机自启程序脚本"/></a><div class="content"><a class="title" href="/2020/02/21/Linux%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E7%A8%8B%E5%BA%8F%E8%84%9A%E6%9C%AC/" title="Linux开机自启程序脚本">Linux开机自启程序脚本</a><time datetime="2020-02-21T05:50:43.000Z" title="发表于 2020-02-21 13:50:43">2020-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/02/17/%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90/" title="修改用户权限"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="修改用户权限"/></a><div class="content"><a class="title" href="/2020/02/17/%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90/" title="修改用户权限">修改用户权限</a><time datetime="2020-02-17T02:26:48.705Z" title="发表于 2020-02-17 10:26:48">2020-02-17</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Yaml Ops</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

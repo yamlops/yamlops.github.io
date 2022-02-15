@@ -1,0 +1,231 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LVM逻辑卷管理 | YamlOps</title><meta name="author" content="Yaml Ops"><meta name="copyright" content="Yaml Ops"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="###什么是LV逻辑卷？逻辑卷是将一个或多个物理分区或块设备整合在一起形成一种逻辑层。可以使独立的硬盘，也可以是独立的分区。 ###逻辑卷结构视图">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LVM逻辑卷管理">
+<meta property="og:url" content="https://yamlops.github.io/2020/02/17/LVM/index.html">
+<meta property="og:site_name" content="YamlOps">
+<meta property="og:description" content="###什么是LV逻辑卷？逻辑卷是将一个或多个物理分区或块设备整合在一起形成一种逻辑层。可以使独立的硬盘，也可以是独立的分区。 ###逻辑卷结构视图">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg">
+<meta property="article:published_time" content="2020-02-17T01:47:11.575Z">
+<meta property="article:modified_time" content="2020-02-17T01:47:11.576Z">
+<meta property="article:author" content="Yaml Ops">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://yamlops.github.io/2020/02/17/LVM/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'LVM逻辑卷管理',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2020-02-17 09:47:11'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">41</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E9%9F%B3%E4%B9%90"><i class="fa-fw /music/"></i><span> 0</span></a></li><li><a class="site-page child" href="/%E7%94%B5%E5%BD%B1"><i class="fa-fw /movies/"></i><span> 1</span></a></li><li><a class="site-page child" href="/%E7%85%A7%E7%89%87"><i class="fa-fw /Gallery/"></i><span> 2</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">YamlOps</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E9%9F%B3%E4%B9%90"><i class="fa-fw /music/"></i><span> 0</span></a></li><li><a class="site-page child" href="/%E7%94%B5%E5%BD%B1"><i class="fa-fw /movies/"></i><span> 1</span></a></li><li><a class="site-page child" href="/%E7%85%A7%E7%89%87"><i class="fa-fw /Gallery/"></i><span> 2</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">LVM逻辑卷管理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-02-17T01:47:11.575Z" title="发表于 2020-02-17 09:47:11">2020-02-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-02-17T01:47:11.576Z" title="更新于 2020-02-17 09:47:11">2020-02-17</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="LVM逻辑卷管理"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><img src="http://upload-images.jianshu.io/upload_images/6121564-435423206449ba79.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<p>###什么是LV逻辑卷？<br><strong>逻辑卷</strong>是将一个或多个物理分区或块设备整合在一起形成一种逻辑层。可以使独立的硬盘，也可以是独立的分区。</p>
+<p>###逻辑卷结构视图</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/6121564-f5104b18c38e0460.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="逻辑卷生成拓扑图"></p>
+<span id="more"></span>
+<p><strong>上图</strong>画的或许不是那么标准，但是也能大体看出逻辑卷的结构。下面从下而上简单说明下：</p>
+<blockquote>
+<p>1.” <strong><code>~]#</code></strong> “ 表示命令提示符<br>2.” <strong><code>#/  /#</code></strong> “ 表示添加的注释内容</p>
+</blockquote>
+<p>1.最下层是有一些硬盘或硬盘分区等组成；</p>
+<p>2.下数第二层是<strong>物理卷</strong>（PV）；**<code>pvcreate</code>**命令是生成物理卷的命令，后面跟那些物理分区或块设备；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~]# pvcreate  /dev/sd&#123;b1,c,d2,e&#125;   #/ pvcreat 命令后面跟要做成物理卷的物理分区或块设备 /#</span><br><span class="line">~]# pvdisplay                      #/ &quot;pvdisplay&quot; 命令是详细列出系统上面每个物理卷的信息 /#</span><br></pre></td></tr></table></figure>
+
+<p>3.下数第三层是<strong>卷组</strong>（VG）；**<code>vgcreate</code>**命令是把物理卷做成卷组的命令，后面跟卷组名称(按实际情况自定义)和物理卷名称；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~]# vgcreate vg0 -s 16M /dev/sd&#123;b1,c,d2,e&#125;    #/ &quot;vg0&quot;是给卷组起的名称；&quot;-s 16M&quot; 是PE值大小 /#</span><br><span class="line">~]# vgdisplay                                 #/ 列出卷组的详细信息 /#</span><br></pre></td></tr></table></figure>
+
+<p>4.最上面一层，就是我们的<strong>逻辑卷</strong>(LV)；**<code>lvcreate</code>**是从卷组生成逻辑卷的命令，后面写逻辑卷的名称、逻辑卷的大小和卷组名称；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~]# lvcreate -n lv0 -l 666 /dev/vg0      #/ &quot;-n&quot;后面跟逻辑卷的名称；&quot;-l&quot;后面跟PE的个数；最后是卷组名称； /#</span><br><span class="line">~]# lvcreate -n lv0 -L 20G /dev/vg0      #/ &quot;-L&quot;大写的后面是逻辑卷容量大小（M,G）/#</span><br><span class="line">~]# lvdisplay                            #/ 列出逻辑卷的详细信息 /#</span><br></pre></td></tr></table></figure>
+
+<p><strong><code>上面差不多已经讲完了如何生成逻辑卷LV了！剩下的步骤不外乎就是:对LV做文件系统--&gt;创建挂载点--&gt;把LV挂载上去--&gt;正常使用即可</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~]# mkfs.ext4  /dev/vg0/lv0        #/ 特别注意：这里的逻辑卷名称是LV的全名！为什么？请看lvdisplay结果 /#</span><br><span class="line">~]# mkdir  /mnt/lv0                #/ 创建挂载逻辑卷的挂载点目录 /#</span><br><span class="line">~]# mount  /dev/vg0/lv0  /mnt/lv0  #/ 挂载逻辑卷 /#</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>###为什么要用逻辑卷管理？</p>
+<blockquote>
+<p><strong>LVM</strong>的重点在于可以弹性调整文件系统的容量！或者说它有在线可扩展性！</p>
+</blockquote>
+<p><strong>大</strong>白话说的话，一个逻辑卷空间不够了你可以从卷组中调出来一部分容量分给它；反过来也可以缩减它的空间大小等等可在线扩展操作。</p>
+<blockquote>
+<p>以下是从百度百科搬过来的关于LVM优点的说法，说的很对我就借花献佛了~</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">LVM与直接使用物理存储相比,有以下优点:</span><br><span class="line">1. 灵活的容量</span><br><span class="line">当使用逻辑卷时,文件系统可以扩展到多个磁盘上,你可以聚合多个磁盘或磁盘分区成单一的逻辑卷.</span><br><span class="line">2.可伸缩的存储池</span><br><span class="line">你可以使用简单的命令来扩大或缩小逻辑卷大小,不用重新格式化或分区磁盘设备.</span><br><span class="line">3.在线的数据再分配</span><br><span class="line">你可以在线移动数据,数据可以在磁盘在线的情况下重新分配.比如,你可以在线更换可热插拔的磁盘.</span><br><span class="line">4. 方便的设备命名</span><br><span class="line">逻辑卷可以按你觉得方便的方式来起任何名称.</span><br><span class="line">5.磁盘条块化.</span><br><span class="line">你可以生成一个逻辑盘,它的数据可以被条块化存储在2个或更多的磁盘上.这样可以明显提升数据吞吐量</span><br><span class="line">6.镜像卷</span><br><span class="line">逻辑卷提供方便的方法来镜像你的数据.</span><br><span class="line">7.卷快照</span><br><span class="line">使用逻辑卷,你可以获得设备快照用来一致性备份或者测试数据更新效果而不影响真实数据.</span><br></pre></td></tr></table></figure>
+<hr>
+<p>###实验：扩展LV容量</p>
+<p><strong>下</strong>面我做做一个在线扩展LV的实验体会体会LVM逻辑卷管理的特性还有相关命令的运用</p>
+<blockquote>
+<p>1.” <strong><code>~]#</code></strong> “ 表示命令提示符<br>2.” <strong><code>#/  /#</code></strong> “ 表示添加的注释内容</p>
+</blockquote>
+<p>#####第一步：用**<code>lsblk</code>**命令查看有没有空闲的硬盘可以让我们拿来用于增加LV容量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">~]#lsblk</span><br><span class="line">NAME              MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT</span><br><span class="line"></span><br><span class="line">#/---------此处省略----------/#</span><br><span class="line"></span><br><span class="line">sdb                 8:16   0   20G  0 disk </span><br><span class="line">└─vgtest-lvtest   253:0    0   30G  0 lvm  </span><br><span class="line">sdc                 8:32   0   50G  0 disk        #/ 发现sdc盘是50G的空间满足实验需求 /#</span><br><span class="line">├─sdc1              8:33   0   10G  0 part </span><br><span class="line">│ └─vgtest-lvtest 253:0    0   30G  0 lvm  </span><br><span class="line">└─sdc2              8:34   0    5G  0 part </span><br><span class="line">sdd                 8:48   0  100G  0 disk </span><br><span class="line">sr0                11:0    1  7.7G  0 rom  /run/media/root/CentOS 7 x86_64</span><br></pre></td></tr></table></figure>
+
+<p><strong>查</strong>看硬盘信息发现**<code>/dev/sdc</code>**硬盘满足我们的实验需求！</p>
+<hr>
+<p>#####第二步:用**<code>fdisk</code>**命令增加一分区</p>
+<blockquote>
+<p>在增加分区的时候需要注意标记新增分区用途的类别</p>
+</blockquote>
+<p><strong>先</strong>分区~</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">~]#fdisk /dev/sdc</span><br><span class="line">Welcome to fdisk (util-linux 2.23.2).</span><br><span class="line"></span><br><span class="line">Changes will remain in memory only, until you decide to write them.</span><br><span class="line">Be careful before using the write command.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Command (m for help): p                               #/ 这是打印硬盘分区信息 /#</span><br><span class="line"></span><br><span class="line">#/---------此处省略----------/#</span><br><span class="line"></span><br><span class="line">   Device Boot      Start         End      Blocks   Id  System</span><br><span class="line">/dev/sdc1            2048    20973567    10485760   8e  Linux LVM</span><br><span class="line">/dev/sdc2        20973568    31459327     5242880   83  Linux</span><br><span class="line"></span><br><span class="line">Command (m for help): u                              #/ &quot;u&quot;是切换扇区和柱面 /#</span><br><span class="line">Changing display/entry units to cylinders (DEPRECATED!).</span><br><span class="line"></span><br><span class="line">Command (m for help): n                              #/ &quot;n&quot;是开始分区 /#                                              </span><br><span class="line">Partition type:</span><br><span class="line">   p   primary (2 primary, 0 extended, 2 free)       #/ 这里的&quot;p&quot;主分区 /#</span><br><span class="line">   e   extended                                      #/ 这里的&quot;e&quot;扩展分区 /#</span><br><span class="line">Select (default p): p                                #/ 这里我分一个主分区 /#</span><br><span class="line">Partition number (3,4, default 3): 3                 #/ 选择主分区编号为3 /#</span><br><span class="line">First cylinder (1959-6527, default 1959): </span><br><span class="line">Using default value 1959</span><br><span class="line">Last cylinder, +cylinders or +size&#123;K,M,G&#125; (1959-6527, default 6527): +10G    #/ 分10G大小 /#</span><br><span class="line">Partition 3 of type Linux and of size 10 GiB is set</span><br><span class="line"></span><br><span class="line">Command (m for help): t                              #/ 这是标记分区类别 /#</span><br><span class="line">Partition number (1-3, default 3): 3                 #/ 输入第几个分区 /#</span><br><span class="line">Hex code (type L to list all codes): L               #/ 大写&quot;L&quot;可以查看各种分区类别编号 /#</span><br><span class="line"></span><br><span class="line">#/---------此处省略----------/#</span><br><span class="line">      </span><br><span class="line">Hex code (type L to list all codes): 8e              #/ &quot;8e&quot;是用于逻辑卷的分区类别标记 /#</span><br><span class="line">Changed type of partition &#x27;Linux&#x27; to &#x27;Linux LVM&#x27;</span><br><span class="line"></span><br><span class="line">Command (m for help): p</span><br><span class="line"></span><br><span class="line">#/---------此处省略----------/#</span><br><span class="line"></span><br><span class="line">   Device Boot      Start         End      Blocks   Id  System</span><br><span class="line">/dev/sdc1               1        1306    10485760   8e  Linux LVM</span><br><span class="line">/dev/sdc2            1306        1959     5242880   83  Linux</span><br><span class="line">/dev/sdc3            1959        3265    10488832   8e  Linux LVM </span><br><span class="line"></span><br><span class="line">Command (m for help): w                              #/ &quot;w&quot;是存盘退出 /#</span><br><span class="line">The partition table has been altered!</span><br><span class="line"></span><br><span class="line">Calling ioctl() to re-read partition table.</span><br><span class="line"></span><br><span class="line">WARNING: Re-reading the partition table failed with error 16: Device or resource busy.</span><br><span class="line">The kernel still uses the old table. The new table will be used at</span><br><span class="line">the next reboot or after you run partprobe(8) or kpartx(8)</span><br><span class="line">Syncing disks.</span><br></pre></td></tr></table></figure>
+
+<p><strong>同</strong>步分区信息：用**<code>partprobe</code><strong>命令同步~并用</strong><code>lsblk</code>**查看分区信息~</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">~]#partprobe                                         #/ 把分区信息同步在内存里 /#</span><br><span class="line">Warning: Unable to open /dev/sr0 read-write (Read-only file system).  </span><br><span class="line">/dev/sr0 has been opened read-only.</span><br><span class="line"></span><br><span class="line">~]#lsblk                                             #/ 查看硬盘信息，是否分区成功 /#</span><br><span class="line">NAME              MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT</span><br><span class="line"></span><br><span class="line">#/---------此处省略----------/#</span><br><span class="line"></span><br><span class="line">sdc                 8:32   0   50G  0 disk </span><br><span class="line">├─sdc1              8:33   0   10G  0 part </span><br><span class="line">│ └─vgtest-lvtest 253:0    0   30G  0 lvm  </span><br><span class="line">├─sdc2              8:34   0    5G  0 part </span><br><span class="line">└─sdc3              8:35   0   10G  0 part </span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>#####第三步：用**<code>pvcreate</code><strong>命令把</strong><code>/dev/sd3</code><strong>生成物理卷并用</strong><code>pvdisplay</code>**查看物理卷详细信息<br><strong>先</strong>生成物理卷~</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~]#pvcreate /dev/sdc3</span><br><span class="line">  Physical volume &quot;/dev/sdc3&quot; successfully created.</span><br></pre></td></tr></table></figure>
+<p><strong>查</strong>看物理卷详细信息~</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">~]#pvdisplay </span><br><span class="line">  --- Physical volume ---</span><br><span class="line"></span><br><span class="line">#/---------此处省略----------/#</span><br><span class="line">   </span><br><span class="line">  &quot;/dev/sdc3&quot; is a new physical volume of &quot;10.00 GiB&quot;     #/ 这里就是我们新生成的物理卷信息 /#</span><br><span class="line">  --- NEW Physical volume ---</span><br><span class="line">  PV Name               /dev/sdc3                         #/ 物理卷名称 /#</span><br><span class="line">  VG Name                                                 #/ 注意，这里的卷组信息还是空的，因为还没划分给卷组 /#</span><br><span class="line">  PV Size               10.00 GiB                         #/ 新增物理卷大小 /#</span><br><span class="line">  Allocatable           NO</span><br><span class="line">  PE Size               0   </span><br><span class="line">  Total PE              0</span><br><span class="line">  Free PE               0</span><br><span class="line">  Allocated PE          0</span><br><span class="line">  PV UUID               81cHlt-osRn-I2Lc-faE6-36GN-ShzX-eHTfGJ</span><br></pre></td></tr></table></figure>
+<hr>
+<p>#####第四步：用**<code>vgextend</code><strong>命令把新的物理卷添加至卷组并用</strong><code>vgdisplay</code>**命令查看卷组详细信息</p>
+<p><strong>开</strong>始之前先看看卷组信息，可以可以做对比，这样会更直接些。关键点我都有注释的哦~</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">~]#vgdisplay </span><br><span class="line">  --- Volume group ---</span><br><span class="line"></span><br><span class="line">#/---------此处省略----------/#</span><br><span class="line"></span><br><span class="line">  VG Size               29.97 GiB                   #/ 卷组大小为30G /#</span><br><span class="line">  PE Size               16.00 MiB</span><br><span class="line">  Total PE              1918</span><br><span class="line">  Alloc PE / Size       1918 / 29.97 GiB</span><br><span class="line">  Free  PE / Size       0 / 0                       #/ 没有可用PE /#</span><br><span class="line">  VG UUID               kbBjKq-iFnA-fQSH-IK5w-EDFl-FFSL-uLSil9</span><br></pre></td></tr></table></figure>
+<p><strong>现</strong>在我们开始用**<code>vdextend</code>**命令增加卷组容量~</p>
+<blockquote>
+<p>**<code>vgextend</code>**命令用于动态扩展LVM卷组，它通过向卷组中添加物理卷来增加卷组的容量。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">~]#vgextend vgtest /dev/sdc3                       #/ 把物理卷&quot;/dev/sdc3&quot;添加至卷组&quot;vgtest&quot;中 /#</span><br><span class="line">  Volume group &quot;vgtest&quot; successfully extended</span><br><span class="line">~]#vgdisplay                                       #/ 查看卷组详细信息 /#</span><br><span class="line">  --- Volume group ---</span><br><span class="line">  VG Name               vgtest</span><br><span class="line">  System ID             </span><br><span class="line">  Format                lvm2</span><br><span class="line">  Metadata Areas        3</span><br><span class="line">  Metadata Sequence No  6</span><br><span class="line">  VG Access             read/write</span><br><span class="line">  VG Status             resizable</span><br><span class="line">  MAX LV                0</span><br><span class="line">  Cur LV                1</span><br><span class="line">  Open LV               0</span><br><span class="line">  Max PV                0</span><br><span class="line">  Cur PV                3</span><br><span class="line">  Act PV                3</span><br><span class="line">  VG Size               39.97 GiB                   #/ 可以看出眷组空间大小从之前只有30G变成目前的40G /#</span><br><span class="line">  PE Size               16.00 MiB</span><br><span class="line">  Total PE              2558</span><br><span class="line">  Alloc PE / Size       1918 / 29.97 GiB</span><br><span class="line">  Free  PE / Size       640 / 10.00 GiB             #/ 这里多出来10G的可用PE /#</span><br><span class="line">  VG UUID               kbBjKq-iFnA-fQSH-IK5w-EDFl-FFSL-uLSil9</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>#####第五步：用**<code>lvextend</code><strong>命令增加逻辑卷的容量，并用</strong><code>lvdisplay</code>**查看逻辑卷详细信息<br><strong>同</strong>样在开始之前我们先看看逻辑卷信息，看看它大小是多少~</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">~]#lvdisplay </span><br><span class="line">  --- Logical volume ---</span><br><span class="line">  LV Path                /dev/vgtest/lvtest        #/ 这才是逻辑卷的名称 /#</span><br><span class="line">  LV Name                lvtest</span><br><span class="line">  VG Name                vgtest</span><br><span class="line">  LV UUID                5IMYwN-9JZS-4KB1-ofFq-WpVn-OVv6-XOCfhL</span><br><span class="line">  LV Write Access        read/write</span><br><span class="line">  LV Creation host, time CentOS7.Wxg, 2017-06-24 20:17:47 +0800</span><br><span class="line">  LV Status              available</span><br><span class="line">  # open                 0</span><br><span class="line">  LV Size                29.97 GiB                  #/ 逻辑卷大小是30G /#</span><br><span class="line">  Current LE             1918</span><br><span class="line">  Segments               2</span><br><span class="line">  Allocation             inherit</span><br><span class="line">  Read ahead sectors     auto</span><br><span class="line">  - currently set to     8192</span><br><span class="line">  Block device           253:0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>现</strong>在我们开始用**<code>lvextend</code>**命令给逻辑卷增加容量<del>就给他增加个5G容量吧</del></p>
+<blockquote>
+<p><strong>lvextend</strong>命令用于在线扩展逻辑卷的空间大小，而不中断应用程序对逻辑卷的访问</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">~]#lvextend -r -L +5G /dev/vgtest/lvtest            #/ 给LV新增加5G的容量,注意增加容量时要有&quot;+&quot;号 /#</span><br><span class="line"></span><br><span class="line">      #/---------此处省略----------/#</span><br><span class="line"></span><br><span class="line">~]#lvdisplay </span><br><span class="line">  --- Logical volume ---</span><br><span class="line">  LV Path                /dev/vgtest/lvtest</span><br><span class="line">  LV Name                lvtest</span><br><span class="line">  VG Name                vgtest</span><br><span class="line">  LV UUID                5IMYwN-9JZS-4KB1-ofFq-WpVn-OVv6-XOCfhL</span><br><span class="line">  LV Write Access        read/write</span><br><span class="line">  LV Creation host, time CentOS7.Wxg, 2017-06-24 20:17:47 +0800</span><br><span class="line">  LV Status              available</span><br><span class="line">  # open                 0</span><br><span class="line">  LV Size                34.97 GiB                 #/ 注意到没有，从之前的30G变成现在的35G了 /#</span><br><span class="line">  Current LE             2238</span><br><span class="line">  Segments               3</span><br><span class="line">  Allocation             inherit</span><br><span class="line">  Read ahead sectors     auto</span><br><span class="line">  - currently set to     8192</span><br><span class="line">  Block device           253:0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>如</strong>果还看不出差别的话，我回过头去看看卷组的信息，看看自由<strong>PE</strong>值是否从<strong>10G</strong>减少到<strong>5G</strong>了~</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">~]#vgdisplay </span><br><span class="line">  --- Volume group ---</span><br><span class="line">  VG Name               vgtest</span><br><span class="line">               </span><br><span class="line"> #/---------此处省略----------/#</span><br><span class="line"></span><br><span class="line">  Alloc PE / Size       2238 / 34.97 GiB</span><br><span class="line">  Free  PE / Size       320 / 5.00 GiB             #/ 注意到没有，从之前的10G变成现在的5G了 /#</span><br><span class="line">  VG UUID               kbBjKq-iFnA-fQSH-IK5w-EDFl-FFSL-uLSil9</span><br></pre></td></tr></table></figure>
+<hr>
+<p>###结语：<br><strong>通</strong>过这个<strong>扩展LV</strong>的实验我们很直观的体会到在线管理逻辑卷的优势，可以有效避免一些不必要的麻烦。</p>
+<p><strong>当</strong>然逻辑卷管理除了<strong>扩展LV</strong>还有很多其他功能，例如可以<strong>缩减LV</strong>避免不必要的空间浪费、可以<strong>移除PV</strong>及时更换老旧的硬盘、可以<strong>跨主机迁移LV</strong>不丢数据的前提下脱离老旧主机迁到新的主机上等等强大的功能都可以实现。在这我就不分别做实验来证明啦~</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Yaml Ops</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://yamlops.github.io/2020/02/17/LVM/">https://yamlops.github.io/2020/02/17/LVM/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://yamlops.github.io" target="_blank">YamlOps</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/02/17/keepalived%E9%AB%98%E5%8F%AF%E7%94%A8Nginx-Proxy%E6%9C%8D%E5%8A%A1/"><img class="prev-cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">keepalived高可用Nginx Proxy服务</div></div></a></div><div class="next-post pull-right"><a href="/2020/02/17/keepalived%E9%AB%98%E5%8F%AF%E7%94%A8Nginx/"><img class="next-cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">keepalived高可用Nginx Proxy服务</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Yaml Ops</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">41</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/k8s-docker-note/" title="k8s-docker-note"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="k8s-docker-note"/></a><div class="content"><a class="title" href="/2021/08/22/k8s-docker-note/" title="k8s-docker-note">k8s-docker-note</a><time datetime="2021-08-22T14:42:41.000Z" title="发表于 2021-08-22 22:42:41">2021-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/08/22/install-mysql/" title="install-mysql"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="install-mysql"/></a><div class="content"><a class="title" href="/2021/08/22/install-mysql/" title="install-mysql">install-mysql</a><time datetime="2021-08-22T10:05:25.000Z" title="发表于 2021-08-22 18:05:25">2021-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/02/21/test/" title="test"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="test"/></a><div class="content"><a class="title" href="/2020/02/21/test/" title="test">test</a><time datetime="2020-02-21T11:19:01.000Z" title="发表于 2020-02-21 19:19:01">2020-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/02/21/Linux%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E7%A8%8B%E5%BA%8F%E8%84%9A%E6%9C%AC/" title="Linux开机自启程序脚本"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux开机自启程序脚本"/></a><div class="content"><a class="title" href="/2020/02/21/Linux%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E7%A8%8B%E5%BA%8F%E8%84%9A%E6%9C%AC/" title="Linux开机自启程序脚本">Linux开机自启程序脚本</a><time datetime="2020-02-21T05:50:43.000Z" title="发表于 2020-02-21 13:50:43">2020-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/02/17/%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90/" title="修改用户权限"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="修改用户权限"/></a><div class="content"><a class="title" href="/2020/02/17/%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90/" title="修改用户权限">修改用户权限</a><time datetime="2020-02-17T02:26:48.705Z" title="发表于 2020-02-17 10:26:48">2020-02-17</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Yaml Ops</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
